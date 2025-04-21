@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="620px" height="620px" viewBox="0 0 620 620" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>fin_symbol_lookup@2x</title>
+    <defs>
+        <linearGradient x1="-13.0377229%" y1="-7.25526908%" x2="83.5109367%" y2="85.1982655%" id="linearGradient-1">
+            <stop stop-color="#2C86B8" offset="0%"></stop>
+            <stop stop-color="#477A99" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="-18.5550521%" y1="-20.4699542%" x2="105.172923%" y2="104.160244%" id="linearGradient-2">
+            <stop stop-color="#477B9A" offset="0%"></stop>
+            <stop stop-color="#1C4965" offset="100%"></stop>
+        </linearGradient>
+        <text id="text-3" font-family="HelveticaNeue-Bold, Helvetica Neue" font-size="298" font-weight="bold" letter-spacing="0.0470050374" fill="#104D72">
+            <tspan x="148.632497" y="345">$</tspan>
+        </text>
+        <filter x="-8.9%" y="10.6%" width="117.7%" height="84.2%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="2.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="2" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="fin_symbol_lookup" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Oval" stroke="#979797" fill="url(#linearGradient-1)" cx="232" cy="232" r="231.5"></circle>
+        <g id="Group-4" stroke="#000000" stroke-width="15">
+            <circle id="Oval" cx="232" cy="232" r="224.5"></circle>
+            <g id="Group-2" transform="translate(375, 377.75)" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M0,31 L42.25,73.25 L25.5,90 L159.75,224.25 C182.583333,237.25 202.416667,235.333333 219.25,218.5 C236.083333,201.666667 238.25,181.583333 225.75,158.25 L92,24.5 L78.25,38.25 L40,0" id="Path-9"></path>
+                <path d="M25.5,90 L159.75,224.25 C182.583333,237.25 202.416667,235.333333 219.25,218.5 C236.083333,201.666667 238.25,181.583333 225.75,158.25 L92,24.5 L78.25,38.25 L42.25,73.25 L25.5,90 Z" id="Path-9" fill="url(#linearGradient-2)"></path>
+            </g>
+        </g>
+        <circle id="Oval" stroke="#979797" stroke-width="15" cx="232" cy="232" r="180.5"></circle>
+        <circle id="Oval" stroke="#000000" stroke-width="15" fill="#FFFFFF" cx="232" cy="232" r="180.5"></circle>
+        <g id="$" fill="#104D72" fill-opacity="1">
+            <use filter="url(#filter-4)" xlink:href="#text-3"></use>
+            <use xlink:href="#text-3"></use>
+        </g>
+        <path d="M91.498895,188.64174 C90.9289344,190.490825 90.3944729,192.355477 89.8963063,194.2349 C89.5366261,195.591858 89.1958662,196.956516 88.8743262,198.328575" id="Oval" stroke="#000000" stroke-width="15" stroke-linecap="round"></path>
+        <path d="M153.717966,107.554952 C152.128129,108.557142 150.55884,109.588955 149.010872,110.649617 C139.894644,116.896023 131.517911,124.142965 124.038949,132.23217 C115.789401,141.154836 108.632155,151.102268 102.779622,161.862055 C102.350236,162.651475 101.927872,163.445268 101.512616,164.243349" id="Oval" stroke="#000000" stroke-width="15" stroke-linecap="round"></path>
+        <path d="M43.281507,160.440024 C42.0948015,163.557422 40.9823327,166.71143 39.9462609,169.899889" id="Oval" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"></path>
+        <path d="M99.1469811,79.9258786 C82.1254403,94.9328722 67.6266211,112.73451 56.3682579,132.613057" id="Oval" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"></path>
+        <path d="M132.096425,56.235824 C129.03697,58.0033922 126.027681,59.8481086 123.071217,61.7673143" id="Oval" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"></path>
+    </g>
+</svg>
