@@ -172,3 +172,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+backend-local/app/data/yahoo_exchanges_cache.json
