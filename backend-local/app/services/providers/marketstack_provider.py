@@ -225,7 +225,9 @@ class MarketstackProvider(ExchangeDataProvider):
             'ASX': '.AX',
             'LSE': '.L',
             'TSX': '.TO',
-            'HKEX': '.HK'
+            'HKEX': '.HK',
+            'NYSE': '.NYS',
+            'NASDAQ': '.NAS'
         }
         return suffix_map.get(exchange_code, '')
         
