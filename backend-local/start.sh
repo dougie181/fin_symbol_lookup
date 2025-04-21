@@ -32,5 +32,5 @@ fi
 echo -e "${GREEN}Starting Flask application...${NC}"
 export FLASK_ENV=development
 export FLASK_APP=app.py
-echo -e "${BLUE}Server running at http://localhost:5000${NC}"
+echo -e "${BLUE}Server running at http://localhost:5001${NC}"
 python3 app.py 

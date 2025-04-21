@@ -24,6 +24,7 @@ const Home: React.FC = () => {
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
   const [selectedExchange, setSelectedExchange] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchType, setSearchType] = useState<'symbol' | 'company'>('symbol');
   const [searchResults, setSearchResults] = useState<Symbol[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,7 +71,7 @@ const Home: React.FC = () => {
     
     try {
       console.log('Searching for:', searchQuery, 'on exchange:', selectedExchange);
-      const response = await fetch(`/api/search?query=${encodeURIComponent(searchQuery)}&exchange=${encodeURIComponent(selectedExchange)}`, {
+      const response = await fetch(`/api/search?query=${encodeURIComponent(searchQuery)}&exchange=${encodeURIComponent(selectedExchange)}&type=${searchType}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -88,7 +89,7 @@ const Home: React.FC = () => {
       setSearchResults(data);
       
       if (data.length === 0) {
-        setError('No symbols found matching your search criteria');
+        setError('No results found matching your search criteria');
       }
     } catch (error) {
       console.error('Error searching symbols:', error);
@@ -122,17 +123,32 @@ const Home: React.FC = () => {
               ))}
             </select>
           </div>
+
+          <div className="mb-4">
+            <label htmlFor="searchType" className="block mb-2 font-medium">
+              Search By
+            </label>
+            <select
+              id="searchType"
+              value={searchType}
+              onChange={(e) => setSearchType(e.target.value as 'symbol' | 'company')}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              <option value="symbol">Symbol</option>
+              <option value="company">Company Name</option>
+            </select>
+          </div>
           
           <div className="mb-4">
             <label htmlFor="search" className="block mb-2 font-medium">
-              Symbol or Company Name
+              {searchType === 'symbol' ? 'Symbol' : 'Company Name'}
             </label>
             <input
               id="search"
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="e.g. AAPL, Apple, MSFT"
+              placeholder={searchType === 'symbol' ? 'e.g. AAPL, MSFT' : 'e.g. Apple, Microsoft'}
               className="w-full px-4 py-2 border rounded-md"
               required
             />
@@ -154,30 +170,27 @@ const Home: React.FC = () => {
         )}
         
         {searchResults.length > 0 && (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Search Results</h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full border-collapse">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border p-2 text-left">Symbol</th>
-                    <th className="border p-2 text-left">Exchange</th>
-                    <th className="border p-2 text-left">Result</th>
-                    <th className="border p-2 text-left">Description</th>
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="px-4 py-2 text-left">Symbol</th>
+                  <th className="px-4 py-2 text-left">Exchange</th>
+                  <th className="px-4 py-2 text-left">Result</th>
+                  <th className="px-4 py-2 text-left">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {searchResults.map((result, index) => (
+                  <tr key={index} className="border-t">
+                    <td className="px-4 py-2">{result.symbol}</td>
+                    <td className="px-4 py-2">{result.exchange}</td>
+                    <td className="px-4 py-2">{result.result}</td>
+                    <td className="px-4 py-2">{result.description}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {searchResults.map((result, index) => (
-                    <tr key={index} className="border-b hover:bg-gray-50">
-                      <td className="border p-2">{result.displaySymbol}</td>
-                      <td className="border p-2">{result.exchange}</td>
-                      <td className="border p-2 font-mono">{result.result}</td>
-                      <td className="border p-2">{result.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </div>

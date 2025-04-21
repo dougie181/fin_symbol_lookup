@@ -1,0 +1,7 @@
+{
+  "terminal.integrated.automationProfile.osx": {
+
+  },
+  "terminal.integrated.confirmOnExit": "always",
+  "terminal.integrated.persistentSessionReviveProcess": "onExitAndWindowClose"
+}

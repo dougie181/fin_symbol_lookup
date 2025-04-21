@@ -1,0 +1,108 @@
+{
+    "exchanges": [
+        {
+            "code": "NMS",
+            "name": "NASDAQ",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "NAS",
+            "status": "active"
+        },
+        {
+            "code": "NYQ",
+            "name": "NYSE",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "NYS",
+            "status": "active"
+        },
+        {
+            "code": "NCM",
+            "name": "NASDAQ Capital Market",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "NAS",
+            "status": "active"
+        },
+        {
+            "code": "PNK",
+            "name": "OTC Pink Market",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "PK",
+            "status": "active"
+        },
+        {
+            "code": "OEM",
+            "name": "OTC Expert Market",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "EX",
+            "status": "active"
+        },
+        {
+            "code": "QX",
+            "name": "OTCQX Market",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "QX",
+            "status": "active"
+        },
+        {
+            "code": "QB",
+            "name": "OTCQB Market",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "QB",
+            "status": "active"
+        },
+        {
+            "code": "OBB",
+            "name": "OTC Bulletin Board",
+            "country": "United States",
+            "market_code": "US",
+            "suffix": "OB",
+            "status": "active"
+        },
+        {
+            "code": "ASX",
+            "name": "ASX",
+            "country": "Australia",
+            "market_code": "AU",
+            "suffix": "AX",
+            "status": "active"
+        },
+        {
+            "code": "CXA",
+            "name": "CHESS Depositary Interests",
+            "country": "Australia",
+            "market_code": "AU",
+            "suffix": "AX",
+            "status": "active"
+        },
+        {
+            "code": "LSE",
+            "name": "LSE",
+            "country": "United Kingdom",
+            "market_code": "GB",
+            "suffix": "L",
+            "status": "active"
+        },
+        {
+            "code": "TOR",
+            "name": "TSX",
+            "country": "Canada",
+            "market_code": "CA",
+            "suffix": "TO",
+            "status": "active"
+        },
+        {
+            "code": "HKG",
+            "name": "HKEX",
+            "country": "Hong Kong",
+            "market_code": "HK",
+            "suffix": "HK",
+            "status": "active"
+        }
+    ]
+} 
