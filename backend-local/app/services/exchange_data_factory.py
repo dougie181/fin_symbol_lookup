@@ -4,6 +4,7 @@ from .base_provider import ExchangeDataProvider
 from .providers.yahoo_finance_provider import YahooFinanceProvider
 from .providers.alpha_vantage_provider import AlphaVantageProvider
 from .providers.marketstack_provider import MarketstackProvider
+from .providers.openfigi_provider import OpenFIGIProvider
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +14,8 @@ class ExchangeDataFactory:
     _providers: Dict[str, Type[ExchangeDataProvider]] = {
         'yahoo': YahooFinanceProvider,
         'alphavantage': AlphaVantageProvider,
-        'marketstack': MarketstackProvider
+        'marketstack': MarketstackProvider,
+        'openfigi': OpenFIGIProvider
     }
     
     @classmethod
@@ -46,6 +48,10 @@ class ExchangeDataFactory:
             {
                 'code': 'marketstack',
                 'name': 'Marketstack'
+            },
+            {
+                'code': 'openfigi',
+                'name': 'OpenFIGI'
             }
         ]
 
