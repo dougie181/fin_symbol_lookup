@@ -17,24 +17,52 @@ interface Symbol {
   result: string;
 }
 
+interface Provider {
+  code: string;
+  name: string;
+}
+
 // Use relative URLs for the API to leverage Next.js rewrites
 const API_BASE_URL = '/api';
 
 const Home: React.FC = () => {
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState<string>('yahoo');
   const [selectedExchange, setSelectedExchange] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchType, setSearchType] = useState<'symbol' | 'company'>('symbol');
   const [searchResults, setSearchResults] = useState<Symbol[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [providerError, setProviderError] = useState<string | null>(null);
 
-  // Fetch available exchanges on component mount
+  // Fetch available providers on component mount
+  useEffect(() => {
+    const fetchProviders = async () => {
+      try {
+        const response = await fetch('/api/providers');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch providers: ${response.status}`);
+        }
+        const data = await response.json();
+        setProviders(data);
+      } catch (error) {
+        console.error('Error fetching providers:', error);
+        setError('Failed to fetch available providers. Please try again later.');
+      }
+    };
+
+    fetchProviders();
+  }, []);
+
+  // Fetch available exchanges when provider changes
   useEffect(() => {
     const fetchExchanges = async () => {
+      setProviderError(null);
       try {
         console.log('Fetching exchanges from: /api/exchanges');
-        const response = await fetch('/api/exchanges', {
+        const response = await fetch(`/api/exchanges?provider=${selectedProvider}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -42,21 +70,22 @@ const Home: React.FC = () => {
         });
         console.log('Response status:', response.status);
         if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Error response:', errorText);
-          throw new Error(`Failed to fetch exchanges: ${response.status} ${response.statusText}`);
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Failed to fetch exchanges: ${response.status}`);
         }
         
         const data = await response.json();
         console.log('Received exchanges:', data);
         setExchanges(data);
-      } catch (error) {
-        console.error('Error fetching exchanges:', error);
+      } catch (err: any) {
+        console.error('Error fetching exchanges:', err);
+        setProviderError(`Error with ${selectedProvider}: ${err.message}`);
+        setExchanges([]);
       }
     };
 
     fetchExchanges();
-  }, []);
+  }, [selectedProvider]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,32 +97,41 @@ const Home: React.FC = () => {
     
     setLoading(true);
     setError(null);
+    setProviderError(null);
     
     try {
       console.log('Searching for:', searchQuery, 'on exchange:', selectedExchange);
-      const response = await fetch(`/api/search?query=${encodeURIComponent(searchQuery)}&exchange=${encodeURIComponent(selectedExchange)}&type=${searchType}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+      const response = await fetch(
+        `/api/search?query=${encodeURIComponent(searchQuery)}&exchange=${encodeURIComponent(selectedExchange)}&type=${searchType}&provider=${selectedProvider}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
       console.log('Search response status:', response.status);
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error response:', errorText);
-        throw new Error(`Failed to search symbols: ${response.status} ${response.statusText}`);
-      }
       
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || `Failed to search symbols: ${response.status}`);
+      }
+      
       console.log('Search results:', data);
       setSearchResults(data);
       
       if (data.length === 0) {
         setError('No results found matching your search criteria');
       }
-    } catch (error) {
-      console.error('Error searching symbols:', error);
-      setError('Error searching symbols. Please try again later.');
+    } catch (err: any) {
+      console.error('Error searching symbols:', err);
+      if (err.message.includes('API key')) {
+        setProviderError(`${providers.find(p => p.code === selectedProvider)?.name} is not properly configured. Please contact the administrator.`);
+      } else {
+        setError('Error searching symbols. Please try again later.');
+      }
+      setSearchResults([]);
     } finally {
       setLoading(false);
     }
@@ -106,6 +144,29 @@ const Home: React.FC = () => {
       <div className="max-w-2xl mx-auto bg-white shadow-md rounded-lg p-6">
         <form onSubmit={handleSearch} className="mb-6">
           <div className="mb-4">
+            <label htmlFor="provider" className="block mb-2 font-medium">
+              Data Provider
+            </label>
+            <select
+              id="provider"
+              value={selectedProvider}
+              onChange={(e) => setSelectedProvider(e.target.value)}
+              className="w-full px-4 py-2 border rounded-md"
+            >
+              {providers.map((provider) => (
+                <option key={provider.code} value={provider.code}>
+                  {provider.name}
+                </option>
+              ))}
+            </select>
+            {providerError && (
+              <div className="mt-2 text-sm text-red-600">
+                {providerError}
+              </div>
+            )}
+          </div>
+
+          <div className="mb-4">
             <label htmlFor="exchange" className="block mb-2 font-medium">
               Exchange (Optional)
             </label>
@@ -114,6 +175,7 @@ const Home: React.FC = () => {
               value={selectedExchange}
               onChange={(e) => setSelectedExchange(e.target.value)}
               className="w-full px-4 py-2 border rounded-md"
+              disabled={!!providerError}
             >
               <option value="">All Exchanges</option>
               {exchanges.map((exchange) => (
@@ -133,6 +195,7 @@ const Home: React.FC = () => {
               value={searchType}
               onChange={(e) => setSearchType(e.target.value as 'symbol' | 'company')}
               className="w-full px-4 py-2 border rounded-md"
+              disabled={!!providerError}
             >
               <option value="symbol">Symbol</option>
               <option value="company">Company Name</option>
@@ -151,19 +214,20 @@ const Home: React.FC = () => {
               placeholder={searchType === 'symbol' ? 'e.g. AAPL, MSFT' : 'e.g. Apple, Microsoft'}
               className="w-full px-4 py-2 border rounded-md"
               required
+              disabled={!!providerError}
             />
           </div>
           
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !!providerError}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
           >
             {loading ? 'Searching...' : 'Search'}
           </button>
         </form>
         
-        {error && (
+        {error && !providerError && (
           <div className="p-4 mb-4 text-red-700 bg-red-100 rounded-md">
             {error}
           </div>

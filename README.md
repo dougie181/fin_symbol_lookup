@@ -4,6 +4,7 @@ A simple application that allows users to search for financial symbols across di
 
 ## Features
 
+- Multiple data provider support with easy switching
 - View a list of major stock exchanges
 - Search for financial symbols by either:
   - Symbol (e.g., AAPL, MSFT)
@@ -57,13 +58,19 @@ The frontend will be available at http://localhost:3000
 ## API Endpoints
 
 All API endpoints support both trailing and non-trailing slashes (e.g., both `/api/exchanges` and `/api/exchanges/` will work).
+All endpoints accept an optional `provider` query parameter to specify the data provider (defaults to 'yahoo').
 
 ### Exchange Related
 - `GET /api/exchanges` - Get a list of all available exchanges
+  - Query parameters:
+    - `provider`: (Optional) Data provider to use
 - `GET /api/exchanges/<code>` - Get details for a specific exchange
+  - Query parameters:
+    - `provider`: (Optional) Data provider to use
 - `GET /api/exchanges/search` - Search exchanges by name or code
   - Query parameters:
     - `q`: Search query string
+    - `provider`: (Optional) Data provider to use
 - `GET /api/exchanges/selected` - Get user's selected exchanges
 - `POST /api/exchanges/selected` - Update user's selected exchanges
   - Body: `{ "exchanges": ["ASX", "NYSE", ...] }`
@@ -73,16 +80,21 @@ All API endpoints support both trailing and non-trailing slashes (e.g., both `/a
   - `query`: The search term
   - `exchange`: (Optional) Filter by exchange code
   - `type`: Search type ('symbol' or 'company')
-  - Example: `/api/search?query=AAPL&exchange=NMS&type=symbol`
+  - `provider`: (Optional) Data provider to use
+  - Example: `/api/search?query=AAPL&exchange=NMS&type=symbol&provider=yahoo`
 
 ### Provider Information
 - `GET /api/providers` - Get list of available data providers
+  - Returns: Array of provider objects with `code` and `name`
+  - Example response: `[{"code": "yahoo", "name": "Yahoo Finance"}, ...]`
 
 ## Technologies Used
 
 - **Frontend:** Next.js, React, TypeScript, TailwindCSS
 - **Backend:** Flask, Python
-- **Data:** Yahoo Finance API
+- **Data Providers:**
+  - Yahoo Finance API (default)
+  - Additional providers can be easily integrated
 - **Styling:** Modern UI with responsive design
 
 ## Development Notes
@@ -96,3 +108,4 @@ All API endpoints support both trailing and non-trailing slashes (e.g., both `/a
   - International exchanges
   - CHESS Depositary Interests
 - URLs support both trailing and non-trailing slashes
+- Provider system is extensible - new providers can be added by implementing the ExchangeDataProvider interface
