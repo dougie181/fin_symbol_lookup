@@ -3,6 +3,7 @@ import logging
 from .base_provider import ExchangeDataProvider
 from .providers.yahoo_finance_provider import YahooFinanceProvider
 from .providers.alpha_vantage_provider import AlphaVantageProvider
+from .providers.marketstack_provider import MarketstackProvider
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +12,8 @@ class ExchangeDataFactory:
     
     _providers: Dict[str, Type[ExchangeDataProvider]] = {
         'yahoo': YahooFinanceProvider,
-        'alphavantage': AlphaVantageProvider
+        'alphavantage': AlphaVantageProvider,
+        'marketstack': MarketstackProvider
     }
     
     @classmethod
@@ -40,5 +42,14 @@ class ExchangeDataFactory:
             {
                 'code': 'alphavantage',
                 'name': 'Alpha Vantage'
+            },
+            {
+                'code': 'marketstack',
+                'name': 'Marketstack'
             }
-        ] 
+        ]
+
+    @classmethod
+    def get_exchange_data(cls, provider_code: str = 'yahoo'):
+        """Get exchange data using the specified provider"""
+        return cls.create_provider(provider_code) 

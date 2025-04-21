@@ -27,7 +27,11 @@ const API_BASE_URL = '/api';
 
 const Home: React.FC = () => {
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
-  const [providers, setProviders] = useState<Provider[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([
+    { code: 'yahoo', name: 'Yahoo Finance' },
+    { code: 'alphavantage', name: 'Alpha Vantage' },
+    { code: 'marketstack', name: 'Marketstack' }
+  ]);
   const [selectedProvider, setSelectedProvider] = useState<string>('yahoo');
   const [selectedExchange, setSelectedExchange] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');

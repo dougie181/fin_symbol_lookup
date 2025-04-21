@@ -7,6 +7,7 @@ from ...services.exchange_data_service import ExchangeDataService
 import logging
 import json
 import os
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -17,9 +18,19 @@ class YahooFinanceProvider(ExchangeDataProvider):
         self._exchange_cache = {}
         self._cache_timestamp = None
         self._cache_duration = timedelta(hours=24)
-        self._cache_file = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'yahoo_exchanges_cache.json')
+        # Create cache directory if it doesn't exist
+        self.cache_dir = os.path.join(os.path.dirname(__file__), 'cache')
+        os.makedirs(self.cache_dir, exist_ok=True)
+        # Add provider-specific prefix to cache file
+        self._cache_file = os.path.join(self.cache_dir, 'yahoo_exchanges.json')
         self.exchange_service = ExchangeDataService()
         self._load_cache()
+        
+    def _get_cache_path(self, cache_key: str) -> str:
+        """Get the full path for a cache file"""
+        # Add provider-specific prefix to prevent cache poisoning
+        provider_prefix = "yahoo_"
+        return os.path.join(self.cache_dir, f"{provider_prefix}{cache_key}.json")
         
     def _load_cache(self):
         """Load cached exchanges from file"""
@@ -45,6 +56,32 @@ class YahooFinanceProvider(ExchangeDataProvider):
                 }, f)
         except Exception as e:
             logger.error(f"Error saving cache: {str(e)}")
+            
+    def _read_cache(self, cache_key: str, max_age_hours: int = 24) -> Optional[Dict]:
+        """Read data from cache if it exists and is not too old"""
+        try:
+            cache_path = self._get_cache_path(cache_key)
+            if not os.path.exists(cache_path):
+                return None
+                
+            # Check if cache is too old
+            if time.time() - os.path.getmtime(cache_path) > max_age_hours * 3600:
+                return None
+                
+            with open(cache_path, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(f"Error reading cache {cache_key}: {e}")
+            return None
+            
+    def _write_cache(self, cache_key: str, data: Dict) -> None:
+        """Write data to cache"""
+        try:
+            cache_path = self._get_cache_path(cache_key)
+            with open(cache_path, 'w') as f:
+                json.dump(data, f)
+        except Exception as e:
+            logger.warning(f"Error writing cache {cache_key}: {e}")
         
     def get_all_exchanges(self) -> List[Dict]:
         """Get all available exchanges from our local data"""
@@ -115,6 +152,15 @@ class YahooFinanceProvider(ExchangeDataProvider):
     def search_symbols(self, query: str, exchange: str = None, search_type: str = 'symbol') -> List[Dict]:
         """Search for symbols that match the query, optionally filtering by exchange"""
         try:
+            # Generate cache key based on query, exchange and search type
+            cache_key = f"symbol_search_{query}_{exchange or 'all'}_{search_type}"
+            
+            # Try to get from cache first (shorter cache time for symbol searches)
+            cached_results = self._read_cache(cache_key, max_age_hours=1)
+            if cached_results:
+                logger.debug(f"Using cached results for {query}")
+                return cached_results
+            
             # Use Yahoo Finance's lookup API
             url = "https://query2.finance.yahoo.com/v1/finance/lookup"
             params = {
@@ -227,6 +273,11 @@ class YahooFinanceProvider(ExchangeDataProvider):
                     continue
             
             logger.debug(f"Found {len(results)} results")
+            
+            # Cache the results
+            if results:
+                self._write_cache(cache_key, results)
+            
             return results
             
         except Exception as e:
